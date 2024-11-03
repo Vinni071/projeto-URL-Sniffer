@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Froakie</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="logotipo">
+        <img src="static\Froakie.png" alt="logotipo">
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="menu">
+                <div class="menu-icon">&#9776;</div>
+                <a href="#"><div class="home-icon">&#8962;</div></a>
+                <div class="chart-icon">&#128200;</div>
+            </div>
+            <div class="links">
+                <ul>
+                    <li><a href="https://instagram.com">Instagram</a></li>
+                    <li><a href="https://facebook.com">Facebook</a></li>
+                    <li><a href="https://youtube.com">YouTube</a></li>
+                    <li><a href="https://linkedin.com">LinkedIn</a></li>
+                    <li><a href="https://google.com">Google</a></li>
+                    <li><a href="https://x.com">X</a></li>
+                    <li><a href="https://pinterest.com">Pinterest</a></li>
+                    <li><a href="https://steam.com">Steam</a></li>
+                    <li><a href="https://microsoft.teams.com">MS Teams</a></li>
+                </ul>
+            </div>
+            <div class="top-10">10<br>TOP</div>
+        </div>
+        <div class="main-content" id="output">
+            
+        </div>
+    </div>
+    <script>
+        const eventSource = new EventSource("/stream");
+        eventSource.onmessage = function(event) {
+            const outputContainer = document.getElementById("output");
+            const newBox = document.createElement("div");
+            newBox.className = "box dynamic";
+            newBox.textContent = event.data;
+            outputContainer.appendChild(newBox);
+        };
+    </script>
+</body>
+</html>
