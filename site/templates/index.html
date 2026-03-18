@@ -3,47 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Froakie</title>
+    <title>Froakie URL Sniffer</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="logotipo">
-        <img src="static\Froakie.png" alt="logotipo">
-    </div>
-    <div class="container">
-        <div class="sidebar">
-            <div class="menu">
-                <div class="menu-icon">&#9776;</div>
-                <a href="#"><div class="home-icon">&#8962;</div></a>
-                <div class="chart-icon">&#128200;</div>
+    <div class="app-container">
+        <aside class="sidebar glass-panel">
+            <div class="sidebar-header">
+                <img src="{{ url_for('static', filename='Froakie.png') }}" alt="Froakie Logo" class="logo-img" onerror="this.src='/static/Froakie.png'">
             </div>
-            <div class="links">
-                <ul>
-                    <li><a href="https://instagram.com">Instagram</a></li>
-                    <li><a href="https://facebook.com">Facebook</a></li>
-                    <li><a href="https://youtube.com">YouTube</a></li>
-                    <li><a href="https://linkedin.com">LinkedIn</a></li>
-                    <li><a href="https://google.com">Google</a></li>
-                    <li><a href="https://x.com">X</a></li>
-                    <li><a href="https://pinterest.com">Pinterest</a></li>
-                    <li><a href="https://steam.com">Steam</a></li>
-                    <li><a href="https://microsoft.teams.com">MS Teams</a></li>
-                </ul>
-            </div>
-            <div class="top-10">10<br>TOP</div>
-        </div>
-        <div class="main-content" id="output">
             
-        </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <span class="nav-label">Main Menu</span>
+                    <a href="#" class="nav-item active">
+                        <i class="ph ph-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="ph ph-chart-line-up"></i>
+                        <span>Analytics</span>
+                    </a>
+                </div>
+
+                <div class="nav-section mt-auto">
+                    <span class="nav-label">Top Origins</span>
+                    <ul class="social-list">
+                        <li><a href="https://instagram.com" class="social-link" target="_blank"><i class="ph ph-instagram-logo"></i> Instagram</a></li>
+                        <li><a href="https://facebook.com" class="social-link" target="_blank"><i class="ph ph-facebook-logo"></i> Facebook</a></li>
+                        <li><a href="https://youtube.com" class="social-link" target="_blank"><i class="ph ph-youtube-logo"></i> YouTube</a></li>
+                        <li><a href="https://linkedin.com" class="social-link" target="_blank"><i class="ph ph-linkedin-logo"></i> LinkedIn</a></li>
+                        <li><a href="https://google.com" class="social-link" target="_blank"><i class="ph ph-google-logo"></i> Google</a></li>
+                        <li><a href="https://x.com" class="social-link" target="_blank"><i class="ph ph-x-logo"></i> X</a></li>
+                        <li><a href="https://pinterest.com" class="social-link" target="_blank"><i class="ph ph-pinterest-logo"></i> Pinterest</a></li>
+                        <li><a href="https://steam.com" class="social-link" target="_blank"><i class="ph ph-steam-logo"></i> Steam</a></li>
+                        <li><a href="https://microsoft.teams.com" class="social-link" target="_blank"><i class="ph ph-microsoft-teams-logo"></i> MS Teams</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar glass-panel">
+                <div class="topbar-title">
+                    <h1>Network Activity Logs</h1>
+                    <p class="subtitle">Live URL Interception</p>
+                </div>
+                <div class="status-indicator">
+                    <div class="pulse-dot"></div>
+                    <span>Listening</span>
+                </div>
+            </header>
+            
+            <div class="cards-grid" id="output">
+                <!-- Dynamic cards will be appended here -->
+            </div>
+        </main>
     </div>
+
     <script>
         const eventSource = new EventSource("/stream");
+        
+        // Colors palette to pick from dynamically
+        const cardColors = ['accent-cyan', 'accent-purple', 'accent-pink', 'accent-blue', 'accent-green', 'accent-yellow'];
+        let colorIndex = 0;
+
         eventSource.onmessage = function(event) {
             const outputContainer = document.getElementById("output");
-            const newBox = document.createElement("div");
-            newBox.className = "box dynamic";
-            newBox.textContent = event.data;
-            outputContainer.appendChild(newBox);
+            
+            const newCard = document.createElement("div");
+            newCard.className = "log-card " + cardColors[colorIndex % cardColors.length];
+            
+            colorIndex++;
+
+            const cardHeader = document.createElement("div");
+            cardHeader.className = "card-header";
+            cardHeader.innerHTML = `<i class="ph ph-link"></i> <span>Intercepted URL</span>`;
+            
+            const cardBody = document.createElement("div");
+            cardBody.className = "card-body";
+            
+            const textEl = document.createElement("p");
+            textEl.className = "log-text";
+            textEl.textContent = event.data;
+            
+            cardBody.appendChild(textEl);
+            newCard.appendChild(cardHeader);
+            newCard.appendChild(cardBody);
+            
+            outputContainer.prepend(newCard); // prepend to show newest at top
         };
     </script>
 </body>
